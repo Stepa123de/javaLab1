@@ -34,4 +34,8 @@ public class Target extends Circle {
         double distance = Math.sqrt(Math.pow(x - getCenterX(), 2) + Math.pow(y - getCenterY(), 2));
         return distance <= getRadius();
     }
+
+    public boolean isOutOfBounce() {
+        return this.getCenterY() + this.getRadius() > this.getScene().getHeight() || this.getCenterY() - this.getRadius() < 0;
+    }
 }

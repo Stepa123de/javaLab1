@@ -11,7 +11,7 @@ public class GameEngine extends Thread {
     private boolean isPaused = false;
     private PoolElements poolBullets;
     private PoolElements poolTargets;
-    private int tarDelta = 1, score = 0;
+    private int tarDelta = 2, score = 0;
     private Label scoreCounter;
 
     public GameEngine(String name, PoolElements poolTargets, PoolElements poolBullets, Label scoreCounter) {
@@ -19,6 +19,11 @@ public class GameEngine extends Thread {
         this.poolBullets = poolBullets;
         this.poolTargets = poolTargets;
         this.scoreCounter = scoreCounter;
+    }
+
+    private void moveElement(Circle circle, double directionX, double directionY) {
+        circle.setCenterX(circle.getCenterX() + directionX);
+        circle.setCenterY(circle.getCenterY() + directionY);
     }
 
     @Override
@@ -32,25 +37,31 @@ public class GameEngine extends Thread {
                         throw new RuntimeException(e);
                     }
                 }
+
                 try {
                     sleep(10);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             int index = 1;
+
                             for (Circle circle : poolTargets) {
                                 Target target = (Target) circle;
-                                target.setCenterY(target.getCenterY() + (target.getFlag() ? -tarDelta * index : +tarDelta * index));
-                                if (target.getCenterY() + target.getRadius() > target.getScene().getHeight() || target.getCenterY() - target.getRadius() < 0) {
+                                int directionY = target.getFlag() ? -tarDelta * index : +tarDelta * index;
+                                moveElement(target, 0, directionY);
+
+                                if (target.isOutOfBounce()) {
                                     target.changeFlag();
                                 }
+
                                 index += 1;
                             }
 
                             ArrayList<Circle> bulletToRemove = new ArrayList<Circle>();
                             for (Circle bullet : poolBullets) {
-                                bullet.setCenterX(bullet.getCenterX() + 5);
-                                if (bullet.getCenterY() + bullet.getRadius() > bullet.getScene().getWidth()) {
+                                moveElement( bullet, 5, 0);
+                                
+                                if (bullet.getCenterX() + bullet.getRadius() > bullet.getScene().getWidth()) {
                                     bulletToRemove.add(bullet);
                                 } else {
                                     index = 1;
