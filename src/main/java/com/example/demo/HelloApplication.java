@@ -71,6 +71,7 @@ public class HelloApplication extends Application {
 
         pane = new Pane();
         pane.getChildren().addAll(uiElements);
+        pane.getChildren().add(player);
 
         Scene scene = new Scene(pane, 700, 500);
         stage.setScene(scene);
